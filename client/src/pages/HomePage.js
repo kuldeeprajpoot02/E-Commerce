@@ -1,9 +1,10 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
 import { useCart } from "../CartContext";
 import "../App.css";
+
+const API_URL = "https://e-commerce-ivel.onrender.com/api/v1/product";
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
@@ -21,9 +22,7 @@ const HomePage = () => {
         setLoading(true);
         setError("");
 
-        const response = await fetch(
-          "http://localhost:8081/api/v1/product"
-        );
+        const response = await fetch(API_URL);
 
         if (!response.ok) {
           throw new Error("Products load nahi ho paaye.");
@@ -38,8 +37,9 @@ const HomePage = () => {
           setError("Products ka data sahi format mein nahi hai.");
         }
       } catch (err) {
+        console.error("Products fetch error:", err);
         setError(
-          "Backend se connection nahi ho raha. Backend server check karein."
+          "Backend se connection nahi ho raha. Kuch der baad dobara try karein."
         );
       } finally {
         setLoading(false);
@@ -52,7 +52,9 @@ const HomePage = () => {
   const categories = useMemo(
     () => [
       "All",
-      ...new Set(products.map((product) => product.category).filter(Boolean)),
+      ...new Set(
+        products.map((product) => product.category).filter(Boolean)
+      ),
     ],
     [products]
   );
@@ -162,8 +164,7 @@ const HomePage = () => {
           <>
             <section id="products" className="product-grid">
               {filteredProducts.map((product) => {
-                const outOfStock =
-                  Number(product.quantity) <= 0;
+                const outOfStock = Number(product.quantity) <= 0;
 
                 return (
                   <article className="product-card" key={product._id}>
@@ -204,9 +205,7 @@ const HomePage = () => {
                             display: "inline-block",
                             visibility: "visible",
                             opacity: 1,
-                            backgroundColor: outOfStock
-                              ? "#999"
-                              : "#5b45c6",
+                            backgroundColor: outOfStock ? "#999" : "#5b45c6",
                             color: "#fff",
                             border: "none",
                             borderRadius: "8px",

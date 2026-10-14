@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
 
+const API_URL = "https://e-commerce-ivel.onrender.com/api/v1/auth/register";
+
 const Register = () => {
   const navigate = useNavigate();
 
@@ -30,29 +32,25 @@ const Register = () => {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        "http://localhost:8081/api/v1/auth/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(form),
-        }
-      );
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
 
       const data = await response.json();
 
-      if (data.success) {
+      if (response.ok && data.success) {
         setMessage("Account created successfully! Please login.");
         setTimeout(() => navigate("/login"), 1200);
       } else {
         setMessage(data.message || data.error || "Signup failed.");
       }
     } catch (error) {
-      setMessage(
-        "Server se connection nahi ho raha. Backend check karein."
-      );
+      console.error("Registration error:", error);
+      setMessage("Server se connection nahi ho raha. Backend check karein.");
     } finally {
       setLoading(false);
     }

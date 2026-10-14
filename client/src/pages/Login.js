@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
 
+const API_URL = "https://e-commerce-ivel.onrender.com/api/v1/auth/login";
+
 const Login = () => {
   const navigate = useNavigate();
 
@@ -16,16 +18,13 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        "http://localhost:8081/api/v1/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
       const data = await response.json();
 
@@ -40,6 +39,7 @@ const Login = () => {
         setMessage(data.message || "Login failed. Details check karein.");
       }
     } catch (error) {
+      console.error("Login error:", error);
       setMessage("Server se connection nahi ho raha.");
     } finally {
       setLoading(false);
